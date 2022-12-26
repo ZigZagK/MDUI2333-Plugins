@@ -9,7 +9,6 @@ require_once __DIR__ . '/PHPMailer.php';
  * @package     Mailer
  * @author      熊猫小A
  * @version     1.0.1
- * @dependence  17.11.15
  * @link        https://blog.imalan.cn/archives/349/
  */
 class Mailer_Plugin implements Typecho_Plugin_Interface
@@ -314,7 +313,7 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
         $className = "Widget_Abstract_{$table}";
         $key = $keys[$table];
         $db = Typecho_Db::get();
-        $widget = new $className(Typecho_Request::getInstance(), Typecho_Widget_Helper_Empty::getInstance());
+        $widget = $className::alloc();
         
         $db->fetchRow(
             $widget->select()->where("{$key} = ?", $pkId)->limit(1),
