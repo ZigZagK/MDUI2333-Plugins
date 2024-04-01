@@ -147,12 +147,12 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
             return;
         }
 
-        $commentObj = self::widgetById('comments', $commentId);
+        $commentObj = Helper::widgetById('comments', $commentId);
         $parentCommentObj = '';
         if($commentObj->parent) {
-            $parentCommentObj = self::widgetById('comments', $commentObj->parent);
+            $parentCommentObj = Helper::widgetById('comments', $commentObj->parent);
         }
-        $postObj = self::widgetById('contents', $commentObj->cid);
+        $postObj = Helper::widgetById('Contents', $commentObj->cid);
 
         if (!$commentObj->have()) {
             return;
@@ -288,37 +288,5 @@ class Mailer_Plugin implements Typecho_Plugin_Interface
         } else {
             Helper::requestService('sendMail', $comment->coid);
         }        
-    }
-
-    /**
-     * 根据ID获取单个Widget对象
-     *
-     * @param string $table 表名, 支持 contents, comments, metas, users
-     * @return Widget_Abstract
-     */
-    public static function widgetById($table, $pkId)
-    {
-        $table = ucfirst($table);
-        if (!in_array($table, array('Contents', 'Comments', 'Metas', 'Users'))) {
-            return NULL;
-        }
-
-        $keys = array(
-            'Contents'  =>  'cid',
-            'Comments'  =>  'coid',
-            'Metas'     =>  'mid',
-            'Users'     =>  'uid'
-        );
-
-        $className = "Widget_Abstract_{$table}";
-        $key = $keys[$table];
-        $db = Typecho_Db::get();
-        $widget = $className::alloc();
-        
-        $db->fetchRow(
-            $widget->select()->where("{$key} = ?", $pkId)->limit(1),
-                array($widget, 'push'));
-
-        return $widget;
     }
 }
